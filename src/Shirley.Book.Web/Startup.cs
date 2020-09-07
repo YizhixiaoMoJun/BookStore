@@ -6,11 +6,14 @@ using BookApi.Model;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Shirley.Book.DataAccess;
+using Shirley.Book.Service.AuthServices;
 using Shirley.Book.Web.Infrastructure;
 
 namespace BookApi
@@ -29,8 +32,13 @@ namespace BookApi
         {
             services.AddControllers(option =>
              {
-                    option.Filters.AddService<HttpGlobalExceptionHandler>();
+                 option.Filters.AddService<HttpGlobalExceptionHandler>();
              }).AddNewtonsoftJson();
+
+            services.AddDbContext<BookContext>(option =>
+            {
+                option.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
+            });
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -39,7 +47,7 @@ namespace BookApi
                     {
                         ValidateIssuer = true,
                         ValidateAudience = true,
-                        ValidateLifetime =true,
+                        ValidateLifetime = true,
                         ClockSkew = TimeSpan.FromSeconds(30),
                         ValidIssuer = Const.Domain,
                         ValidAudience = Const.Domain,
@@ -48,13 +56,14 @@ namespace BookApi
                     };
                 });
 
-            services.AddSwaggerGen(c=>
+            services.AddSwaggerGen(c =>
             {
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
                 var securityRequirement = new OpenApiSecurityRequirement();
-                var securityScheme = new OpenApiSecurityScheme{
+                var securityScheme = new OpenApiSecurityScheme
+                {
                     Scheme = JwtBearerDefaults.AuthenticationScheme,
                     Type = SecuritySchemeType.ApiKey,
                     In = ParameterLocation.Header,
@@ -67,7 +76,7 @@ namespace BookApi
                 };
                 securityRequirement.Add(securityScheme, new[] {
                     JwtBearerDefaults.AuthenticationScheme});
-                c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme,securityScheme);
+                c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, securityScheme);
                 c.AddSecurityRequirement(securityRequirement);
                 c.SwaggerDoc("v1",
                     new OpenApiInfo()
@@ -76,7 +85,8 @@ namespace BookApi
                         Title = "BookApi Title",
                     });
             });
-            services.AddDomainServices();
+
+            services.AddDomainServicesByConversion(typeof(IAuthService).Assembly);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -93,7 +103,7 @@ namespace BookApi
 
             app.UseSwaggerUI(options =>
             {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json","Book Api V1");
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Book Api V1");
             });
 
             app.UseRouting();

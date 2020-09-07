@@ -4,9 +4,8 @@ using System.Threading.Tasks;
 
 namespace Shirley.Book.Service.AuthServices
 {
-    public interface IAuthServices
+    public interface IAuthService
     {
-        Task<BaseResponse> Login(UserInfo userInfo);
-
+        Task<AuthenticateResult> Authentication(UserInfo userInfo);
     }
 }

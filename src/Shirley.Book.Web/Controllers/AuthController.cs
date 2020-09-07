@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using Shirley.Book.Service.AuthServices;
 using Shirley.Book.Model;
+using Shirley.Book.Web.Domains;
 
 namespace BookApi.Controllers
 {
@@ -13,9 +14,9 @@ namespace BookApi.Controllers
     [Route("[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly IAuthServices _authServices;
+        private readonly ILoginService _authServices;
 
-        public AuthController(IAuthServices authServices)
+        public AuthController(ILoginService authServices)
         {
             _authServices = authServices;
         }
@@ -31,15 +32,20 @@ namespace BookApi.Controllers
             if (string.IsNullOrEmpty(userInfo.UserName) || string.IsNullOrEmpty(userInfo.Pwd))
             {
                 Log.Information("UserName or Password is incorrect");
-                return BadRequest(new BaseResponse { Message = "UserName or Password is incorrect", Result = false });
+                return BadRequest(new BaseResponse { Message = "UserName or Password is incorrect", IsSuccess = false });
             }
-           return Ok(_authServices.Login(userInfo));
+           return Ok(_authServices.Login(userInfo.UserName, userInfo.Pwd));
         }
 
 
         [HttpPost("LoginPost")]
         public IActionResult LoginPost(string userName, string pwd)
         {
+            if (userName == "dog" && pwd == "shirely")
+            {
+                throw new DomainException("dog can not login my system!");
+            }
+
             return Ok();
         }
 

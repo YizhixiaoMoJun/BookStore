@@ -35,8 +35,8 @@ namespace Shirley.Book.Web.Infrastructure
 
             if (context.Exception is DomainException domain)
             {
-                this.logger.LogWarning("status : {status},{message}", domain.Status, domain.Message);
-                context.Result = new JsonResult(ApiResponse.Error(domain.Message, domain.Status));
+                this.logger.LogWarning("status : {status}, {message}", domain.Status, domain.Message);
+                context.Result = new JsonResult(ApiResponse.Invalid(domain.Message, domain.Status));
                 context.ExceptionHandled = true;
                 return;
             }

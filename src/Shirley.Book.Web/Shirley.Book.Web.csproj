@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Shirley.Book.DataAccess\Shirley.Book.DataAccess.csproj" />
     <ProjectReference Include="..\Shirley.Book.Model\Shirley.Book.Model.csproj" />
     <ProjectReference Include="..\Shirley.Book.Service\Shirley.Book.Service.csproj" />
   </ItemGroup>
