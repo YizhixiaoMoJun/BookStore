@@ -91,6 +91,9 @@ namespace BookApi
             services.AddMediatR(typeof(IAuthService).Assembly);
             services.AddDomainServicesByConversion(typeof(IAuthService).Assembly);
             services.AddHostedService<StockIncrementService>();
+            services.AddStackExchangeRedisCache(option => {
+                option.Configuration = "localhost";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -25,3 +25,6 @@ export default function() {
         }
     });
 };
+
+
+//k6 run .\book-order.ts --vus 10 --duration 10s
