@@ -1,15 +1,18 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MediatR" Version="8.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.8" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.7.1" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.7.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Shirley.Book.DataAccess\Shirley.Book.DataAccess.csproj" />
     <ProjectReference Include="..\Shirley.Book.Model\Shirley.Book.Model.csproj" />
   </ItemGroup>
 

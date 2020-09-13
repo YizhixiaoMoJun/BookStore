@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Shirley.Book.Web.Domains
+namespace Shirley.Book.Service.Domains
 {
     public class DomainException : Exception
     {

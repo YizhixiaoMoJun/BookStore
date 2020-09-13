@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Shirley.Book.DataAccess;
 
 namespace Shirley.Book.DataAccess.Migrations
 {
     [DbContext(typeof(BookContext))]
-    partial class BookContextModelSnapshot : ModelSnapshot
+    [Migration("20200912144921_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,7 +49,7 @@ namespace Shirley.Book.DataAccess.Migrations
                     b.ToTable("BookOrders");
                 });
 
-            modelBuilder.Entity("Shirley.Book.Model.BookOrderDetail", b =>
+            modelBuilder.Entity("Shirley.Book.Model.BookOrderDetial", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
@@ -78,15 +80,10 @@ namespace Shirley.Book.DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("FreezeStock")
-                        .IsConcurrencyToken()
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Sn")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("StockCount")
-                        .IsConcurrencyToken()
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -117,10 +114,10 @@ namespace Shirley.Book.DataAccess.Migrations
                     b.ToTable("OrderStocks");
                 });
 
-            modelBuilder.Entity("Shirley.Book.Model.BookOrderDetail", b =>
+            modelBuilder.Entity("Shirley.Book.Model.BookOrderDetial", b =>
                 {
                     b.HasOne("Shirley.Book.Model.BookOrder", null)
-                        .WithMany("OrderDetails")
+                        .WithMany("OrderDetials")
                         .HasForeignKey("BookOrderId");
                 });
 #pragma warning restore 612, 618

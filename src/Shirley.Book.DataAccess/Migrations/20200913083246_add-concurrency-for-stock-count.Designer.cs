@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Shirley.Book.DataAccess;
 
 namespace Shirley.Book.DataAccess.Migrations
 {
     [DbContext(typeof(BookContext))]
-    partial class BookContextModelSnapshot : ModelSnapshot
+    [Migration("20200913083246_add-concurrency-for-stock-count")]
+    partial class addconcurrencyforstockcount
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -77,10 +79,6 @@ namespace Shirley.Book.DataAccess.Migrations
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("FreezeStock")
-                        .IsConcurrencyToken()
-                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Sn")
                         .HasColumnType("TEXT");

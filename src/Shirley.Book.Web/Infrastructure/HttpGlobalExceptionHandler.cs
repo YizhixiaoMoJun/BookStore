@@ -4,11 +4,7 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Shirley.Book.Web.Domains;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Shirley.Book.Service.Domains;
 
 namespace Shirley.Book.Web.Infrastructure
 {

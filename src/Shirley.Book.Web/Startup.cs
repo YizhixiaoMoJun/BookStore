@@ -3,6 +3,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using BookApi.Model;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -30,10 +31,11 @@ namespace BookApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<HttpGlobalExceptionHandler>();
             services.AddControllers(option =>
-             {
-                 option.Filters.AddService<HttpGlobalExceptionHandler>();
-             }).AddNewtonsoftJson();
+            {
+                option.Filters.Add<HttpGlobalExceptionHandler>();
+            }).AddNewtonsoftJson();
 
             services.AddDbContext<BookContext>(option =>
             {
@@ -86,7 +88,9 @@ namespace BookApi
                     });
             });
 
+            services.AddMediatR(typeof(IAuthService).Assembly);
             services.AddDomainServicesByConversion(typeof(IAuthService).Assembly);
+            services.AddHostedService<StockIncrementService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -96,8 +100,6 @@ namespace BookApi
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.UseHttpsRedirection();
 
             app.UseSwagger();
 

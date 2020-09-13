@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using Shirley.Book.Service.AuthServices;
 using Shirley.Book.Model;
-using Shirley.Book.Web.Domains;
+using Shirley.Book.Service.Domains;
 
 namespace BookApi.Controllers
 {
