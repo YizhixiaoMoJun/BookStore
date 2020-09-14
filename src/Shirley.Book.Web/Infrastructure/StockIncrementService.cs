@@ -35,47 +35,34 @@ namespace Shirley.Book.Web.Infrastructure
             "149159cb-e5e4-41f2-8c9b-3243daada9a3",
         };
 
-        private readonly Random random = new Random();
-
         protected async override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            while (!stoppingToken.IsCancellationRequested)
+            await Task.Delay(5000);
+
+            using var scope = serviceProvider.CreateScope();
+            var sp = scope.ServiceProvider;
+            var logger = sp.GetRequiredService<ILogger<StockIncrementService>>();
+
+            var mediator = sp.GetRequiredService<IMediator>();
+
+            try
             {
-                await Task.Delay(5000);
-
-                using var scope = serviceProvider.CreateScope();
-                var sp = scope.ServiceProvider;
-                var logger = sp.GetRequiredService<ILogger<StockIncrementService>>();
-
-                var mediator = sp.GetRequiredService<IMediator>();
-
-                var sn = sns[random.Next(0, sns.Count)];
-                var count = random.Next(1, 5);
-
-                try
+                await mediator.Send(new StockAddCommand
                 {
-                    await mediator.Send(new StockAddCommand
+                    BookStock = new BookStockViewModel
                     {
-                        BookStock = new BookStockViewModel
-                        {
-                            StockViewModels = new List<StockViewModel>
-                            {
-                                new StockViewModel
-                                {
-                                    Count = count,
-                                    Sn = sn
-                                }
-                            }
-                        }
-                    });
+                        StockViewModels = sns.
+                             Select(x => new StockViewModel() { Count = 100, Sn = x })
+                            .ToList()
+                    }
+                });
 
-                    logger.LogInformation("successful add stock {sn}, {count}.", sn, count);
-                }
-                catch (Exception e)
-                {
-                    logger.LogWarning(e, "error occured while add stock {sn}: {count}.", sn, count);
-                }
             }
+            catch (Exception e)
+            {
+                logger.LogWarning(e, "error occured while add stock ");
+            }
+
         }
     }
 }

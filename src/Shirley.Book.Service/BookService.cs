@@ -85,6 +85,7 @@ namespace Shirley.Book.Service
                 .ToList();
 
             var sns = books.Select(b => b.Sn).ToList();
+ 
             var stocks = await bookContext.BookStocks
                 .Where(s => sns.Contains(s.Sn))
                 .ToListAsync();
@@ -97,7 +98,7 @@ namespace Shirley.Book.Service
                     stock = new BookStock
                     {
                         Sn = book.Sn,
-                        StockCount = book.Count
+                        StockCount = 0
                     };
 
                     bookContext.BookStocks.Add(stock);
@@ -108,8 +109,11 @@ namespace Shirley.Book.Service
                     logger.LogError("detected data {Id} run into concurrent conflict state! freeze {freezeCount}, stock {stockCount}", stock.Id, stock.FreezeStock, stock.StockCount);
                     continue;
                 }
+                //test
+                //stock.StockCount += book.Count;
 
-                stock.StockCount += book.Count;
+                stock.StockCount = 30;
+                stock.FreezeStock = 0;
             }
 
             await bookContext.SaveChangesAsync();
@@ -186,5 +190,6 @@ namespace Shirley.Book.Service
 
             return bookOrder.Id;
         }
+
     }
 }

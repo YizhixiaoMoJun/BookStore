@@ -15,7 +15,7 @@ var sns = [
 export default function() {
     var payload = JSON.stringify({
         orderDetails: [
-            { sn: sns[Math.round(Math.random() * sns.length - 1)], count: Math.round(Math.random() * 4) + 1}
+            { sn: sns[Math.round(Math.random() * sns.length - 1)], count: Math.round(Math.random() * 8) + 3}
         ]
     });
 

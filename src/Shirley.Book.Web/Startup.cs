@@ -16,6 +16,7 @@ using Microsoft.OpenApi.Models;
 using Shirley.Book.DataAccess;
 using Shirley.Book.Service.AuthServices;
 using Shirley.Book.Web.Infrastructure;
+using StackExchange.Redis;
 
 namespace BookApi
 {
@@ -91,9 +92,8 @@ namespace BookApi
             services.AddMediatR(typeof(IAuthService).Assembly);
             services.AddDomainServicesByConversion(typeof(IAuthService).Assembly);
             services.AddHostedService<StockIncrementService>();
-            services.AddStackExchangeRedisCache(option => {
-                option.Configuration = "localhost";
-            });
+            services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost"));
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
