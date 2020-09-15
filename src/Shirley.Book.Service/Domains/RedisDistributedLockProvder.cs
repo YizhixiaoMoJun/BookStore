@@ -17,7 +17,7 @@ namespace Shirley.Book.Service.Domains
 
         public string TransactionId => throw new NotImplementedException();
 
-        public async Task<DistributedLock> Aquire(string key)
+        public async Task<DistributedLock> Acquire(string key)
         {
             var db = redis.GetDatabase();
             var now = DateTime.Now;
