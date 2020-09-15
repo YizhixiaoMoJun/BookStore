@@ -19,12 +19,14 @@ namespace Shirley.Book.Service
         private readonly IMediator mediator;
         private readonly BookContext bookContext;
         private readonly ILogger<BookService> logger;
+        private readonly IDistributedLockProvder distributedLockProvider;
 
-        public BookService(IMediator mediator, BookContext bookContext, ILogger<BookService> logger)
+        public BookService(IMediator mediator, BookContext bookContext, ILogger<BookService> logger,IDistributedLockProvder distributedLockProvider)
         {
             this.mediator = mediator;
             this.bookContext = bookContext;
             this.logger = logger;
+            this.distributedLockProvider = distributedLockProvider;
         }
 
 
@@ -143,7 +145,12 @@ namespace Shirley.Book.Service
             }
 
             var sns = orderViewModel.OrderDetails.Select(o => o.Sn)
+                .OrderBy(x=>x)
                 .ToList();
+            var lockKey = string.Join(",", sns);
+
+            using var distributedLock = await distributedLockProvider.Acquire(lockKey);
+            
             var stocks = await bookContext.BookStocks
                 .Where(s => sns.Contains(s.Sn))
                 .ToListAsync();

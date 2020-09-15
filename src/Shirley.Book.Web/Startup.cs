@@ -15,6 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Shirley.Book.DataAccess;
 using Shirley.Book.Service.AuthServices;
+using Shirley.Book.Service.Domains;
 using Shirley.Book.Web.Infrastructure;
 using StackExchange.Redis;
 
@@ -93,6 +94,7 @@ namespace BookApi
             services.AddDomainServicesByConversion(typeof(IAuthService).Assembly);
             services.AddHostedService<StockIncrementService>();
             services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost"));
+            services.AddScoped<IDistributedLockProvder, RedisDistributedLockProvder>();
 
         }
 
