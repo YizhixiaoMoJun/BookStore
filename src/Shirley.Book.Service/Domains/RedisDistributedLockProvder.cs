@@ -10,12 +10,15 @@ namespace Shirley.Book.Service.Domains
     {
         private readonly IConnectionMultiplexer redis;
 
+        private readonly string transcationId;
+
         public RedisDistributedLockProvder(IConnectionMultiplexer redis)
         {
             this.redis = redis;
+            this.transcationId = Guid.NewGuid().ToString();
         }
 
-        public string TransactionId => throw new NotImplementedException();
+        public string TransactionId => transcationId;
 
         public async Task<DistributedLock> Acquire(string key)
         {
@@ -24,10 +27,15 @@ namespace Shirley.Book.Service.Domains
             while (true)
             {
                 var vaildKeyExist = await db.StringSetAsync(key,
-                    30, TimeSpan.FromSeconds(30),
+                    TransactionId, TimeSpan.FromSeconds(30),
                     When.NotExists, CommandFlags.None);
 
                 if (vaildKeyExist)
+                {
+                    return new DistributedLock(key, this);
+                }
+
+                if(await db.StringGetAsync(key) == transcationId)
                 {
                     return new DistributedLock(key, this);
                 }
@@ -46,7 +54,10 @@ namespace Shirley.Book.Service.Domains
         public async Task Release(DistributedLock distributedLock)
         {
             var db = redis.GetDatabase();
-            await db.KeyDeleteAsync(distributedLock.LockKey);
+            if(await db.StringGetAsync(distributedLock.LockKey) == TransactionId)
+            {
+                await db.KeyDeleteAsync(distributedLock.LockKey);
+            }
         }
     }
 }

@@ -24,7 +24,7 @@ namespace Shirley.Book.Web.Controllers
         private readonly IDatabase redisdb;
         private readonly BookContext bookContext;
 
-        public BookController(IMediator mediator, IConnectionMultiplexer redis,BookContext bookContext)
+        public BookController(IMediator mediator, IConnectionMultiplexer redis, BookContext bookContext)
         {
             this.mediator = mediator;
             this.redis = redis;
@@ -33,6 +33,8 @@ namespace Shirley.Book.Web.Controllers
         }
 
         [HttpPost("order")]
+        // [ServiceFilter(typeof(UnitOfWorkFilterAttribute))]
+        [UnitOfWorkFilter]
         public async Task<BaseResponse> OrderBook(BookOrderViewModel model)
         {
             var order = await mediator.Send(new BookOrderCommand { BookOrder = model });

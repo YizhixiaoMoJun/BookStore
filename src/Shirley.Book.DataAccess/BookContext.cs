@@ -39,10 +39,10 @@ namespace Shirley.Book.DataAccess
 
                 builder.Property(b => b.Id)
                     .ValueGeneratedOnAdd();
-                builder.Property(b => b.StockCount);
-                //    .IsConcurrencyToken();
-                //builder.Property(b => b.FreezeStock)
-                //    .IsConcurrencyToken();
+                builder.Property(b => b.StockCount)
+                    .IsConcurrencyToken();
+                builder.Property(b => b.FreezeStock)
+                    .IsConcurrencyToken();
             });
 
             modelBuilder.Entity<OrderStock>(builder =>

@@ -7,6 +7,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +17,7 @@ using Microsoft.OpenApi.Models;
 using Shirley.Book.DataAccess;
 using Shirley.Book.Service.AuthServices;
 using Shirley.Book.Service.Domains;
+using Shirley.Book.Service.UOW;
 using Shirley.Book.Web.Infrastructure;
 using StackExchange.Redis;
 
@@ -95,7 +97,9 @@ namespace BookApi
             services.AddHostedService<StockIncrementService>();
             services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost"));
             services.AddScoped<IDistributedLockProvder, RedisDistributedLockProvder>();
-
+            services.AddScoped<IUnitOfWorkManager, UnitOfWorkManager>();
+            services.AddScoped<UnitOfWorkMiddleware>();
+            services.AddScoped<UnitOfWorkFilterAttribute>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -118,6 +122,8 @@ namespace BookApi
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+           // app.UseMiddleware<UnitOfWorkMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using Shirley.Book.DataAccess;
 using Shirley.Book.Model;
@@ -21,7 +22,7 @@ namespace Shirley.Book.Service
         private readonly ILogger<BookService> logger;
         private readonly IDistributedLockProvder distributedLockProvider;
 
-        public BookService(IMediator mediator, BookContext bookContext, ILogger<BookService> logger,IDistributedLockProvder distributedLockProvider)
+        public BookService(IMediator mediator, BookContext bookContext, ILogger<BookService> logger, IDistributedLockProvder distributedLockProvider)
         {
             this.mediator = mediator;
             this.bookContext = bookContext;
@@ -37,6 +38,9 @@ namespace Shirley.Book.Service
                 .ToList();
 
             var sns = books.Select(b => b.Sn).ToList();
+            //var lockKey = string.Join(",", sns);
+
+            // using var distributedLock = await distributedLockProvider.Acquire(lockKey);
             var stocks = await bookContext.BookStocks
                 .Where(s => sns.Contains(s.Sn))
                 .ToListAsync();
@@ -87,7 +91,7 @@ namespace Shirley.Book.Service
                 .ToList();
 
             var sns = books.Select(b => b.Sn).ToList();
- 
+
             var stocks = await bookContext.BookStocks
                 .Where(s => sns.Contains(s.Sn))
                 .ToListAsync();
@@ -145,15 +149,16 @@ namespace Shirley.Book.Service
             }
 
             var sns = orderViewModel.OrderDetails.Select(o => o.Sn)
-                .OrderBy(x=>x)
+                .OrderBy(x => x)
                 .ToList();
+
             var lockKey = string.Join(",", sns);
 
             using var distributedLock = await distributedLockProvider.Acquire(lockKey);
-            
+
             var stocks = await bookContext.BookStocks
-                .Where(s => sns.Contains(s.Sn))
-                .ToListAsync();
+            .Where(s => sns.Contains(s.Sn))
+            .ToListAsync();
             var errors = new List<string>();
             foreach (var book in orderViewModel.OrderDetails)
             {
